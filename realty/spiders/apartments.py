@@ -1,15 +1,21 @@
+import os
 import time
 from typing import Iterable
 from urllib.parse import urljoin
 
 import scrapy
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
 from scrapy import Request
 from scrapy.http import Response
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+
+load_dotenv()
+
+APARTMENT_SCRAPE_LIMIT = int(os.getenv("APARTMENT_SCRAPE_LIMIT"))
 
 
 class ApartmentsSpider(scrapy.Spider):
@@ -148,10 +154,10 @@ class ApartmentsSpider(scrapy.Spider):
 
             urls_set.update(self._parse_detail_links(page_source))
 
-            if len(urls_set) >= 60:
+            if len(urls_set) >= APARTMENT_SCRAPE_LIMIT:
                 break
 
-        return list(urls_set)[:60]
+        return list(urls_set)[:APARTMENT_SCRAPE_LIMIT]
 
     @staticmethod
     def _parse_detail_links(page_source) -> list[str]:
