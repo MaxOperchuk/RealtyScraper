@@ -1,4 +1,15 @@
+import time
+from typing import Iterable
+from urllib.parse import urljoin
+
 import scrapy
+from bs4 import BeautifulSoup
+from scrapy import Request
+from scrapy.http import Response
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 
 class ApartmentsSpider(scrapy.Spider):
@@ -121,8 +132,8 @@ class ApartmentsSpider(scrapy.Spider):
         if title:
             return title.strip()
 
-    def parse(self, response):
-        pass
+        return "No title provided"
+
     def _get_urls(self, url: str) -> list[str]:
 
         urls_set = set()
@@ -142,3 +153,25 @@ class ApartmentsSpider(scrapy.Spider):
 
         return list(urls_set)[:60]
 
+    @staticmethod
+    def _parse_detail_links(page_source) -> list[str]:
+        soup = BeautifulSoup(page_source, "html.parser")
+        detail_links = [
+            link.get("href")
+            for link in soup.select(".property-thumbnail-summary-link")
+        ]
+
+        return detail_links
+
+    def _click_next_button(self) -> None:
+
+        try:
+            next_button = WebDriverWait(
+                self.driver, 10
+            ).until(EC.element_to_be_clickable(
+                (By.CLASS_NAME, "next"))
+            )
+
+            next_button.find_element(By.TAG_NAME, "a").click()
+        except Exception as e:
+            print(f"An error occurred: {e}")
