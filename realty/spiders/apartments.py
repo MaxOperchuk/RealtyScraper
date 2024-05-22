@@ -63,10 +63,12 @@ class ApartmentsSpider(scrapy.Spider):
             "div.carac-value span::text"
         ).get()
 
-        if floor_area:
-            return floor_area.split(" sqft")[0].strip()
+        if not floor_area:
+            return "Floor area not provided"
 
-        return "Floor area not provided"
+        floor_area = floor_area.split(" sqft")[0].strip().replace(",", ".")
+
+        return float(floor_area)
 
     @staticmethod
     def _get_number_of_bedrooms(response: Response) -> int | str:
