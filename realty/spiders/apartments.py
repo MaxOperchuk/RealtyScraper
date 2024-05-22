@@ -83,13 +83,15 @@ class ApartmentsSpider(scrapy.Spider):
         return "Number of bedrooms not provided"
 
     @staticmethod
-    def _get_price(response: Response) -> str:
+    def _get_price(response: Response) -> float | str:
         price = response.css("span.text-nowrap::text").get()
 
-        if price:
-            return price.strip()
+        if not price:
+            return "Price not provided"
 
-        return "Price not provided"
+        price = price.strip().replace("$", "").replace(",", ".")
+
+        return float(price)
 
     @staticmethod
     def _get_photos_links(response: Response) -> str:
