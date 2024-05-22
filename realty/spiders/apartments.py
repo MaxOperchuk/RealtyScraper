@@ -13,6 +13,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
+
 load_dotenv()
 
 APARTMENT_SCRAPE_LIMIT = int(os.getenv("APARTMENT_SCRAPE_LIMIT"))
@@ -160,7 +161,7 @@ class ApartmentsSpider(scrapy.Spider):
         return list(urls_set)[:APARTMENT_SCRAPE_LIMIT]
 
     @staticmethod
-    def _parse_detail_links(page_source) -> list[str]:
+    def _parse_detail_links(page_source: str) -> list[str]:
         soup = BeautifulSoup(page_source, "html.parser")
         detail_links = [
             link.get("href")
