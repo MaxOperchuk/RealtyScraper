@@ -23,7 +23,7 @@ class ApartmentsSpider(scrapy.Spider):
     name = "apartments"
     allowed_domains = ["realtylink.org"]
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         self.driver = webdriver.Chrome()
 
@@ -43,7 +43,7 @@ class ApartmentsSpider(scrapy.Spider):
     def close(self, reason: str) -> None:
         self.driver.close()
 
-    def parse(self, response: Response, **kwargs):
+    def parse(self, response: Response, **kwargs) -> Iterable[dict]:
 
         yield {
             "title": self._get_title(response),
